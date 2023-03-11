@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import Navbar from "./components/Navbar";
+import UserList from "./components/UserList";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import React, { Component } from "react";
+import Search from "./components/Search";
+
+export class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false,
+      users: [],
+    };
+  }
+  searchUser = (keyword) => {
+    this.setState({ loading: true });
+
+    setTimeout(() => {
+      fetch("https://api.github.com/search/users?q=" + keyword)
+        .then((Response) => Response.json())
+        .then((data) => this.setState({ users: data.items, loading: false }));
+    }, 1000);
+  };
+  render() {
+    return (
+      <div>
+        <Navbar icon="bi bi-github" title="Github Finder" />
+        <Search searchUser={this.searchUser} />
+        <div className="container mt-3">
+          <UserList users={this.state.users} loading={this.state.loading} />
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;
