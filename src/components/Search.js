@@ -16,8 +16,12 @@ export class Search extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    this.props.searchUser(this.state.keyword);
-    this.setState({ keyword: "" });
+    if (this.state.keyword === "") {
+      this.props.displayAlert("Anahtar kelime giriniz", "danger");
+    } else {
+      this.props.searchUser(this.state.keyword);
+      this.setState({ keyword: "" });
+    }
   };
   render() {
     return (
@@ -29,13 +33,21 @@ export class Search extends Component {
               type="text"
               onChange={this.onChange}
               className="form-control"
-              placeholder="anahatar kelime"
+              placeholder="Anahatar Kelime"
             />
             <button className="btn btn-primary" type="submit">
               Ara
             </button>
           </div>
         </form>
+        {this.props.showClearButton && (
+          <button
+            onClick={this.props.clearResult}
+            className="btn  btn-outline-danger mt-2 btn-block "
+          >
+            Sonuçları temizle
+          </button>
+        )}
       </div>
     );
   }

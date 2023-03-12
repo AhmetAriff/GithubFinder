@@ -3,6 +3,7 @@ import UserList from "./components/UserList";
 
 import React, { Component } from "react";
 import Search from "./components/Search";
+import Alert from "./components/Alert";
 
 export class App extends Component {
   constructor(props) {
@@ -11,8 +12,10 @@ export class App extends Component {
     this.state = {
       loading: false,
       users: [],
+      error: null,
     };
   }
+
   searchUser = (keyword) => {
     this.setState({ loading: true });
 
@@ -22,11 +25,30 @@ export class App extends Component {
         .then((data) => this.setState({ users: data.items, loading: false }));
     }, 1000);
   };
+
+  clearResult = () => {
+    this.setState({ users: [] });
+  };
+
+  displayAlert = (msg, type) => {
+    this.setState({ error: { msg: msg, type: type } });
+
+    setTimeout(() => {
+      this.setState({ error: null });
+    }, 3000);
+  };
+
   render() {
     return (
       <div>
         <Navbar icon="bi bi-github" title="Github Finder" />
-        <Search searchUser={this.searchUser} />
+        <Search
+          searchUser={this.searchUser}
+          clearResult={this.clearResult}
+          showClearButton={this.state.users.length > 0 ? true : false}
+          displayAlert={this.displayAlert}
+        />
+        <Alert error={this.state.error} />
         <div className="container mt-3">
           <UserList users={this.state.users} loading={this.state.loading} />
         </div>
