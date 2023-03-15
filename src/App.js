@@ -1,60 +1,55 @@
 import Navbar from "./components/Navbar";
 import UserList from "./components/UserList";
 
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Search from "./components/Search";
 import Alert from "./components/Alert";
 
-export class App extends Component {
-  constructor(props) {
-    super(props);
+const App = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    this.state = {
-      loading: false,
-      users: [],
-      error: null,
-    };
-  }
-
-  searchUser = (keyword) => {
-    this.setState({ loading: true });
+  const searchUser = (keyword) => {
+    setLoading(true);
 
     setTimeout(() => {
       fetch("https://api.github.com/search/users?q=" + keyword)
         .then((Response) => Response.json())
-        .then((data) => this.setState({ users: data.items, loading: false }));
+        .then((data) => {
+          setUsers(data.items);
+          setLoading(false);
+        });
     }, 1000);
   };
 
-  clearResult = () => {
-    this.setState({ users: [] });
+  const clearResult = () => {
+    setUsers([]);
   };
 
-  displayAlert = (msg, type) => {
-    this.setState({ error: { msg: msg, type: type } });
+  const displayAlert = (msg, type) => {
+    setError({ msg: msg, type: type });
 
     setTimeout(() => {
-      this.setState({ error: null });
+      setError(null);
     }, 3000);
   };
 
-  render() {
-    return (
-      <div>
-        <Navbar icon="bi bi-github" title="Github Finder" />
-        <Search
-          searchUser={this.searchUser}
-          clearResult={this.clearResult}
-          showClearButton={this.state.users.length > 0 ? true : false}
-          displayAlert={this.displayAlert}
-        />
-        <Alert error={this.state.error} />
-        <div className="container mt-3">
-          <UserList users={this.state.users} loading={this.state.loading} />
-        </div>
+  return (
+    <div>
+      <Navbar icon="bi bi-github" title="Github Finder" />
+      <Search
+        searchUser={searchUser}
+        clearResult={clearResult}
+        showClearButton={users.length > 0 ? true : false}
+        displayAlert={displayAlert}
+      />
+      <Alert error={error} />
+      <div className="container mt-3">
+        <UserList users={users} loading={loading} />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default App;

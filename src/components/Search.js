@@ -1,56 +1,48 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 
-export class Search extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      keyword: "",
-    };
-  }
+const Search = ({ displayAlert, searchUser, showClearButton, clearResult }) => {
+  const [keyword, setKeyword] = useState("");
 
-  onChange = (e) => {
-    this.setState({
-      keyword: e.target.value,
-    });
+  const onChange = (e) => {
+    setKeyword(e.target.value);
   };
 
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    if (this.state.keyword === "") {
-      this.props.displayAlert("Anahtar kelime giriniz", "danger");
+    if (keyword === "") {
+      displayAlert("Anahtar kelime giriniz", "danger");
     } else {
-      this.props.searchUser(this.state.keyword);
-      this.setState({ keyword: "" });
+      searchUser(keyword);
+      setKeyword("");
     }
   };
-  render() {
-    return (
-      <div className="container my-3">
-        <form onSubmit={this.onSubmit}>
-          <div className="input-group">
-            <input
-              value={this.state.keyword}
-              type="text"
-              onChange={this.onChange}
-              className="form-control"
-              placeholder="Anahatar Kelime"
-            />
-            <button className="btn btn-primary" type="submit">
-              Ara
-            </button>
-          </div>
-        </form>
-        {this.props.showClearButton && (
-          <button
-            onClick={this.props.clearResult}
-            className="btn  btn-outline-danger mt-2 btn-block "
-          >
-            Sonuçları temizle
+
+  return (
+    <div className="container my-3">
+      <form onSubmit={onSubmit}>
+        <div className="input-group">
+          <input
+            value={keyword}
+            type="text"
+            onChange={onChange}
+            className="form-control"
+            placeholder="Anahatar Kelime"
+          />
+          <button className="btn btn-primary" type="submit">
+            Ara
           </button>
-        )}
-      </div>
-    );
-  }
-}
+        </div>
+      </form>
+      {showClearButton && (
+        <button
+          onClick={clearResult}
+          className="btn  btn-outline-danger mt-2 btn-block "
+        >
+          Sonuçları temizle
+        </button>
+      )}
+    </div>
+  );
+};
 
 export default Search;
