@@ -1,30 +1,41 @@
 import Navbar from "./components/Navbar";
 import UserList from "./components/UserList";
 
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import Search from "./components/Search";
 import Alert from "./components/Alert";
+import UsersReducer from "./reducer/UsersReducer";
 
 const App = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const initalState = {
+    users: [],
+    loading: false,
+  };
+  const [state, dispatch] = useReducer(UsersReducer, initalState);
   const [error, setError] = useState(null);
 
   const searchUser = (keyword) => {
-    setLoading(true);
-
+    setLoading();
     setTimeout(() => {
       fetch("https://api.github.com/search/users?q=" + keyword)
         .then((Response) => Response.json())
         .then((data) => {
-          setUsers(data.items);
-          setLoading(false);
+          dispatch({
+            type: "SEARCH_USERS",
+            users: data.items,
+          });
         });
     }, 1000);
   };
 
   const clearResult = () => {
-    setUsers([]);
+    dispatch({ type: "CLEAR_USERS" });
+  };
+
+  const setLoading = () => {
+    dispatch({
+      type: "SET_LOADİNG",
+    });
   };
 
   const displayAlert = (msg, type) => {
@@ -41,12 +52,12 @@ const App = () => {
       <Search
         searchUser={searchUser}
         clearResult={clearResult}
-        showClearButton={users.length > 0 ? true : false}
+        showClearButton={state.users.length > 0 ? true : false}
         displayAlert={displayAlert}
       />
       <Alert error={error} />
       <div className="container mt-3">
-        <UserList users={users} loading={loading} />
+        <UserList users={state.users} loading={state.loading} />
       </div>
     </div>
   );
