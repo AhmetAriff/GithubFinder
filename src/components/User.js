@@ -1,6 +1,7 @@
 import React from "react";
 
-const User = ({ avatar_url, login, html_url }) => {
+const User = (props) => {
+  const { avatar_url, login, html_url } = props.user;
   return (
     <div className="card mb-3">
       <div className="row g-0">
