@@ -1,7 +1,7 @@
 import React from "react";
 
-const User = (props) => {
-  const { avatar_url, login, html_url } = props.user;
+const User = ({ user }) => {
+  const { avatar_url, login, html_url } = user;
   return (
     <div className="card mb-3">
       <div className="row g-0">
